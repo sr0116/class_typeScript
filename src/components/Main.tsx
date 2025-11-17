@@ -1,5 +1,6 @@
 "use client"
-import React from 'react';
+import {useState} from 'react';
+import EmployeeList from "@/components/EmployeeList";
 
 // main에서 데이터를 만듬
 // 리액트에서 기본적으로 상수(불변)로 const 지정 , (immutable)
@@ -11,7 +12,7 @@ import React from 'react';
 // list 안에 object
 
 // 이게 결국 스키마 구성
-type EmployeeInfo = {
+export type EmployeeInfo = {
     id: number;
     name: string;
     age: number | string;
@@ -19,20 +20,30 @@ type EmployeeInfo = {
     language: string;
     pay: number | string;
 }
-
-const initialState: EmployeeInfo[] = [
+// {infos.map ( (info, index) => (
+//     <div key={index}>{info.name}</div>
+// ))}
+export const initialState: EmployeeInfo[] = [
     {id: 1, name: "Jone", age: 35, job: "frontend", language: "react", pay: 1},
-    {id: 2, name: "Jone", age: 30, job: "frontend", language: "next", pay: 120},
-    {id: 3, name: "Jone", age: 29, job: "backend", language: "react", pay: 130},
-    {id: 4, name: "Jone", age: 28, job: "frontend", language: "react", pay: 17},
+    {id: 2, name: "Jannie", age: 30, job: "frontend", language: "next", pay: 120},
+    {id: 3, name: "Sue", age: 29, job: "backend", language: "react", pay: 130},
+    {id: 4, name: "Susan", age: 28, job: "frontend", language: "react", pay: 17},
 ]
-console.log(initialState);
 
+// 이것도 출력 됨 (string뿐만 아니라 list도가능)
+const test = ["Jone", "Sue" , "Peter"] ;
+
+export const  initialEmployeeInfo: EmployeeInfo =
+        {id: 1, name: "Jone", age: 35, job: "frontend", language: "react", pay: 1}
 
 const Main = () => {
+    // 제네릭 (동적할당에서 사용함) -> EmployeeInfo[]
+    const [infos, setInfos] = useState<EmployeeInfo[]>(initialState);
+    const [info, setInfo] = useState<EmployeeInfo>(initialEmployeeInfo);
     return (
         <div>
-            Hello TypeScript...!
+            {/*map은 결국 list를 출력할 수 있다 (표출할 수 있다)*/}
+           <EmployeeList information= {infos} />
         </div>
     );
 };
