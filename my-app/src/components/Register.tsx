@@ -1,5 +1,9 @@
-import React from 'react';
-import {EmployeeInfo, useEmployee} from "@/context/EmployeeContext";
+"use client"
+
+import React, {useState} from 'react';
+import {EmployeeInfo, handleRegister} from "@/redux/employeeSlice";
+import {useDispatch} from "react-redux";
+import {RootDispatch} from "@/redux/store";
 
 // 폼태그 css
 export const formStyle: React.CSSProperties = {
@@ -29,27 +33,22 @@ export  const inputStyle: React.CSSProperties = {
     fontSize: '14px',
 };
 
-const initialInfo: EmployeeInfo = {
-    // 초기화 작업
-    id: 0, name: "", job: "", age : 0, language: "" , pay: 1
-}
-
+const initialEmpInfo: EmployeeInfo
+    = {id:0, name: '', age: 0, job: "", language: "", pay: 0}
 
 
 const Register = () => {
-    const [info, setInfo] = React.useState<EmployeeInfo>(initialInfo);
-    const {handleRegister} = useEmployee();
-
-    // 변함 없는 코드 (동적인 코드) [] -> 반정형 만들어줌
-    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setInfo(prev => ({...prev, [name]: value}));
-        // console.log(e.target.value);
-    }
+    const dispatch = useDispatch<RootDispatch>();
+    const [info, setInfo] = useState<EmployeeInfo>(initialEmpInfo);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        // console.log(name, value)
+        setInfo((prev) => ({ ...prev, [name]: value })); // id는 그대로 유지
+    };
 
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleRegister(info);
+        dispatch( handleRegister(info));
 
     }
     return (
@@ -71,4 +70,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+    export default Register;

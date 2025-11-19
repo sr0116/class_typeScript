@@ -1,5 +1,9 @@
+"use client"
+
 import React, {useContext, useMemo} from 'react';
-import {EmployeeInfo, useEmployee} from "@/context/EmployeeContext";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
+import {EmployeeInfo} from "@/redux/employeeSlice";
 
 const tStyle: React.CSSProperties = {
     width: "800px",
@@ -30,25 +34,14 @@ const tdStyle: React.CSSProperties = {
     color: "#555",
 };
 
-interface InfotableProps {
-    infos: EmployeeInfo[];
-    selectedId: number;
-}
 
 const InfoTable = () => {
-    const {infos, selectedId} = useEmployee();
+    const {infos, selectedId} = useSelector((state:RootState) => state.emp);
 
     const infoObject: EmployeeInfo | undefined  = useMemo(() =>
         infos.find(info => info.id === selectedId), [selectedId, infos]); //  하나로 올때는 find
 
-    const info2 = infos.filter(info => info.id === selectedId); // 여러 개가 올때는 필터 (리스트)
-    // object.keys(object) => [0, 0] list로 만들어야 함 (화면에 object는 안 보이고 리스트로 해야 보임)
-    // 다 보이게 할거면 object.entries [ [0, 0] , [0, 0] ....]
-
-    // 조건을 걸어줘야 함
     if (!infoObject) return <div>선택된 정보가 없습니다.</div>;
-
-
     return (
         // 테이블 구조가 트리구조
         <div className="flex mx-auto">
