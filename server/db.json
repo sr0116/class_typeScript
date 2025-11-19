@@ -31,6 +31,38 @@
       "job": "frontend",
       "language": "react",
       "pay": 17
+    },
+    {
+      "id": 5,
+      "name": "관리자",
+      "age": "23",
+      "job": "2",
+      "language": "2",
+      "pay": "1"
+    },
+    {
+      "id": 6,
+      "name": "관리자2",
+      "age": "23",
+      "job": "2",
+      "language": "2",
+      "pay": "1"
+    },
+    {
+      "id": 7,
+      "name": "관리자23",
+      "age": "23",
+      "job": "2",
+      "language": "2",
+      "pay": "1"
+    },
+    {
+      "id": 8,
+      "name": "관리자234",
+      "age": "23",
+      "job": "2",
+      "language": "2",
+      "pay": "1"
     }
   ]
 }
