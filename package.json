@@ -1,0 +1,17 @@
+{
+  "name": "next_js_employee_redux",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.10.1",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "private": true
+}
