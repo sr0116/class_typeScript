@@ -73,6 +73,32 @@ const Main = () => {
     //     }, [의존성을 넣으면 됨]); 대부분의 의존성은 props나 state가 변할 때 렌더링 ([] -> 이건 빈값 넣어주면 한 번만 변경하고 렌더링 안함)
 
     const handleUpgrade = (obj: EmployeeInfo) => {
+        // 이름 중복
+        infos.some(item => item.name !== obj.name);
+        if (!obj.name) {
+            alert("중복된 이름입니다")
+            return;
+        }
+
+        if (!obj.age || Number(obj.age) < 0 ) {
+            alert("나이는 0 이상의 정수로 작성해수세요.")
+            return;
+        }
+
+        if (!obj.pay || Number(obj.pay) < 0 ) {
+            alert("급여는 0 이상의 정수로 작성해수세요.")
+            return;
+        }
+
+        if (!obj.language) {
+            alert("언어 필수입니다.")
+            return;
+        }
+        if (!obj.job) {
+            alert("직업은 필수입니다.")
+            return;
+        }
+
         setInfos(prev =>
             prev.map(info =>
                 info.id === obj.id ? obj : info
@@ -81,15 +107,82 @@ const Main = () => {
         console.log(obj);
     };
 
+    
     const handleMode = (mod: Mode) => {
+        // infos.filter( info => info.id !== selectedId)
+        // 삭제
+        if(mod === "delete") {
+            if (!selectedId) {
+                alert("직원을 선택해 주세요")
+                return;
+            }
+            // targetObject (무슨 자료인지 확실하게 알아야 함)
+            const targetObj = infos.find(x => x.id === selectedId);
+            if (!targetObj) {
+                alert("해당 직원을 찾을 수 없습니다.")
+                return;
+            }
+            if (confirm(`${targetObj?.name} 직원을 삭제하시겠습니까?`)) {
+                setInfos( prev => prev.filter(item => item.id !== selectedId))
+                alert(`${selectedId} 번 ${targetObj?.name}직원을 삭제 완료했습니다.`)
+            }
+            return;
+        }
+        // 실제로는 else if 를 잘 사용안 함
+        if (mod === "reset") {
+            if (confirm("목록을 초기화 하시겠습니까?")) {
+                setInfos(initialTotal);
+                alert("목록을 초기화완료했습니다.")
+            }
+            return;
+        }
+        if (mod === "upgrade") {
+            if (confirm("수정하시겠습니까?")) {
+
+            }
+        }
         setMode(mod);
     }
+
     const handleSelectedId = (id: number) => {
         setSelectedId(id); // id를 받았다고 치고 실행을 하면 setSelectedId(id);
     }
+    // 글등록
     const handleRegister = (obj: EmployeeInfo) => {
         const nextId = infos.length ? Math.max(...infos.map(i => i.id)) + 1 : 1;
+        // 아이디 정보
         const newObj = { ...obj, id: nextId };
+
+        if (!obj.name) {
+            alert("이름을 필수입니다.")
+            return;
+        }
+
+        // 이름 중복
+        infos.some(item => item.name !== obj.name);
+        if (!obj.name) {
+            alert("중복된 이름입니다")
+            return;
+        }
+
+        if (!obj.age || Number(obj.age) < 0 ) {
+            alert("나이는 0 이상의 정수로 작성해수세요.")
+            return;
+        }
+
+        if (!obj.pay || Number(obj.pay) < 0 ) {
+            alert("급여는 0 이상의 정수로 작성해수세요.")
+            return;
+        }
+
+        if (!obj.language) {
+            alert("언어 필수입니다.")
+            return;
+        }
+        if (!obj.job) {
+            alert("직업은 필수입니다.")
+            return;
+        }
         setInfos( prev => ([...prev, {...obj, id: nextId}]));
         console.log(newObj);
     }
