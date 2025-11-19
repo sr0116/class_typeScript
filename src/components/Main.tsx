@@ -33,7 +33,6 @@ const Main = () => {
                 ))}
             </div>
             <div>
-
                 {mode === "register" && <Register /> }
                 {mode === "upgrade" && <Upgrade />}
             </div>
@@ -42,7 +41,5 @@ const Main = () => {
     );
 
 };
-
-
 
 export default Main;

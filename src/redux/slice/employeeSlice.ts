@@ -1,5 +1,10 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {fetchGetEmployeeInfos} from "@/redux/api/employeeAPI";
+import {
+    fetchDeleteEmployeeInfoById,
+    fetchGetEmployeeInfos,
+    fetchPostEmployeeInfos,
+    fetchPutEmployeeInfos
+} from "@/redux/api/employeeAPI";
 
 // 초기 기본 직원 목록
 const initialTotal: EmployeeInfo[] = [
@@ -147,54 +152,54 @@ const handleSelectedIdReducer = (
     state.upInfo = state.infos.find(info => info.id === id) ?? null;
 }
 
-// 글등록
-const handleRegisterReducer = (
-    state: EmployeeStateType,
-    action: PayloadAction<EmployeeInfo>
-) => {
-    const nextId = state.infos.length
-        ? Math.max(...state.infos.map(i => i.id)) + 1
-        : 1;
-
-    const newObj = {...action.payload, id: nextId};
-
-    // 검증
-    if (!newObj.name) {
-        alert("이름은 필수입니다.");
-        return;
-    }
-
-
-    if (state.infos.some(item => item.name === newObj.name)) {
-        alert("중복된 이름입니다.");
-        return;
-    }
-
-    if (!newObj.age || Number(newObj.age) < 0) {
-        alert("나이는 0 이상의 정수로 작성해주세요.");
-        return;
-    }
-
-    if (!newObj.pay || Number(newObj.pay) < 0) {
-        alert("급여는 0 이상의 정수로 작성해주세요.");
-        return;
-    }
-
-    if (!newObj.language) {
-        alert("언어는 필수입니다.");
-        return;
-    }
-
-    if (!newObj.job) {
-        alert("직업은 필수입니다.");
-        return;
-    }
-
-    // 검증 완료 → push
-    state.infos.push(newObj);
-
-    state.mode = "";
-}
+// // 글등록
+// const handleRegisterReducer = (
+//     state: EmployeeStateType,
+//     action: PayloadAction<EmployeeInfo>
+// ) => {
+//     const nextId = state.infos.length
+//         ? Math.max(...state.infos.map(i => i.id)) + 1
+//         : 1;
+//
+//     const newObj = {...action.payload, id: nextId};
+//
+//     // 검증
+//     if (!newObj.name) {
+//         alert("이름은 필수입니다.");
+//         return;
+//     }
+//
+//
+//     if (state.infos.some(item => item.name === newObj.name)) {
+//         alert("중복된 이름입니다.");
+//         return;
+//     }
+//
+//     if (!newObj.age || Number(newObj.age) < 0) {
+//         alert("나이는 0 이상의 정수로 작성해주세요.");
+//         return;
+//     }
+//
+//     if (!newObj.pay || Number(newObj.pay) < 0) {
+//         alert("급여는 0 이상의 정수로 작성해주세요.");
+//         return;
+//     }
+//
+//     if (!newObj.language) {
+//         alert("언어는 필수입니다.");
+//         return;
+//     }
+//
+//     if (!newObj.job) {
+//         alert("직업은 필수입니다.");
+//         return;
+//     }
+//
+//     // 검증 완료 → push
+//     state.infos.push(newObj);
+//
+//     state.mode = "";
+// }
 
 // thunk에 슬라이스 담기
 const employeeSlice = createSlice({
@@ -203,7 +208,7 @@ const employeeSlice = createSlice({
     reducers:{
         handleMode: handleModeReducer,
         handleUpgrade: handleUpgradeReducer,
-        handleRegister: handleRegisterReducer,
+        // handleRegister: handleRegisterReducer,
         handleSelectedId: handleSelectedIdReducer,
     },
     // 외부
@@ -223,58 +228,30 @@ const employeeSlice = createSlice({
                 state.loading = false; 
                 state.error = action.payload ??  "로딩 실패"; // catch로 리턴
             })
-        // 등록
+
+        // 조회 GET 전체 데이터
         builder
-            .addCase(fetchGetEmployeeInfos.pending, (state, action) => {
+            .addCase(fetchPutEmployeeInfos.pending, (state, action) => {
                 state.loading = true; // 로딩 상태
                 state.error = null;
             })
             // 데이터가 들어오면 실행
-            .addCase(fetchGetEmployeeInfos.fulfilled, (state, action) => {
+            .addCase(fetchPutEmployeeInfos.fulfilled, (state, action) => {
                 state.loading = false;
-                state.infos = action.payload; // response.data가 payload값이라 보면 됨
+                state.upInfo = action.payload; // response.data가 payload값이라 보면 됨
             })
-            .addCase(fetchGetEmployeeInfos.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload ??  "로딩 실패"; // catch로 리턴
-            })
-        // 수정
-        builder
-            .addCase(fetchGetEmployeeInfos.pending, (state, action) => {
-                state.loading = true; // 로딩 상태
-                state.error = null;
-            })
-            // 데이터가 들어오면 실행
-            .addCase(fetchGetEmployeeInfos.fulfilled, (state, action) => {
-                state.loading = false;
-                state.infos = action.payload; // response.data가 payload값이라 보면 됨
-            })
-            .addCase(fetchGetEmployeeInfos.rejected, (state, action) => {
+            .addCase(fetchPutEmployeeInfos.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload ??  "로딩 실패"; // catch로 리턴
             })
-        // 삭제
-        builder
-            .addCase(fetchGetEmployeeInfos.pending, (state, action) => {
-                state.loading = true; // 로딩 상태
-                state.error = null;
-            })
-            // 데이터가 들어오면 실행
-            .addCase(fetchGetEmployeeInfos.fulfilled, (state, action) => {
-                state.loading = false;
-                state.infos = action.payload; // response.data가 payload값이라 보면 됨
-            })
-            .addCase(fetchGetEmployeeInfos.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload ??  "로딩 실패"; // catch로 리턴
-            })
+
     }
 });
 
 export const  {
     handleMode,
     handleUpgrade,
-    handleRegister,
+    // handleRegister,
     handleSelectedId,
 } = employeeSlice.actions;
 

@@ -1,9 +1,10 @@
 "use client"
 
 import React, {useState} from 'react';
-import {EmployeeInfo, handleRegister} from "@/redux/slice/employeeSlice";
-import {useDispatch} from "react-redux";
-import {RootDispatch} from "@/redux/store";
+import {EmployeeInfo} from "@/redux/slice/employeeSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {RootDispatch, RootState} from "@/redux/store";
+import {fetchPostEmployeeInfos} from "@/redux/api/employeeAPI";
 
 // 폼태그 css
 export const formStyle: React.CSSProperties = {
@@ -40,6 +41,7 @@ const initialEmpInfo: EmployeeInfo
 const Register = () => {
     const dispatch = useDispatch<RootDispatch>();
     const [info, setInfo] = useState<EmployeeInfo>(initialEmpInfo);
+    const {infos} = useSelector((state:RootState)=> state.emp);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         // console.log(name, value)
@@ -48,9 +50,37 @@ const Register = () => {
 
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        dispatch( handleRegister(info));
-
+    // 검증
+    if (!info.name) {
+        alert("이름은 필수입니다.");
+        return;
     }
+        if (!info.age || Number(info.age) < 0) {
+            alert("나이는 0 이상의 정수로 작성해주세요.");
+            return;
+        }
+
+        if (!info.pay || Number(info.pay) < 0) {
+            alert("급여는 0 이상의 정수로 작성해주세요.");
+            return;
+        }
+    if (infos.some(item => item.name === info.name)) {
+        alert("중복된 이름입니다.");
+        return;
+    }
+
+    if (!info.language) {
+        alert("언어는 필수입니다.");
+        return;
+    }
+
+    if (!info.job) {
+        alert("직업은 필수입니다.");
+        return;
+    }
+        dispatch( fetchPostEmployeeInfos(info));
+    };
+
     return (
         <div>
             <form style={formStyle} onSubmit={handleSubmit}>

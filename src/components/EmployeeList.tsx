@@ -4,11 +4,18 @@ import InfoTable from "@/components/InfoTable";
 import {useDispatch, useSelector} from "react-redux";
 import {RootDispatch, RootState} from "@/redux/store";
 import {handleSelectedId} from "@/redux/slice/employeeSlice";
+import {useEffect} from "react";
+import {fetchGetEmployeeInfos} from "@/redux/api/employeeAPI";
 
 // 키하고 벨류가 같으면 하나만 사용 {a: 5}
 const EmployeeList = () => {
     const {infos} = useSelector((state: RootState) => state.emp);
     const dispatch = useDispatch<RootDispatch>();
+
+    /// 심어주기
+    useEffect(() => {
+        dispatch(fetchGetEmployeeInfos());
+    }, [dispatch]);
 
     return (
         <>
