@@ -1,0 +1,36 @@
+{
+  "employees": [
+    {
+      "id": 1,
+      "name": "Jone",
+      "age": 35,
+      "job": "frontend",
+      "language": "react",
+      "pay": 1
+    },
+    {
+      "id": 2,
+      "name": "Jannie",
+      "age": 30,
+      "job": "frontend",
+      "language": "next",
+      "pay": 120
+    },
+    {
+      "id": 3,
+      "name": "Sue",
+      "age": 29,
+      "job": "backend",
+      "language": "react",
+      "pay": 130
+    },
+    {
+      "id": 4,
+      "name": "Susan",
+      "age": 28,
+      "job": "frontend",
+      "language": "react",
+      "pay": 17
+    }
+  ]
+}
