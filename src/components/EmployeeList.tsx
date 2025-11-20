@@ -1,38 +1,35 @@
-"use client"
-import {buttonBarStyle} from "./Main";
-import InfoTable from "@/components/InfoTable";
-import {useDispatch, useSelector} from "react-redux";
-import {RootDispatch, RootState} from "@/redux/store";
-import {handleSelectedId} from "@/redux/slice/employeeSlice";
-import {useEffect} from "react";
-import {fetchGetEmployeeInfos} from "@/redux/api/employeeAPI";
+"use client";
 
-// 키하고 벨류가 같으면 하나만 사용 {a: 5}
+import { useDispatch, useSelector } from "react-redux";
+import { RootDispatch, RootState } from "@/redux/store";
+import { handleSelectedId } from "@/redux/slice/employeeSlice";
+import { fetchGetEmployeeInfos } from "@/redux/api/employeeAPI";
+import { useEffect } from "react";
+import InfoTable from "@/components/InfoTable";
+import { buttonBarStyle } from "./Main";
+
 const EmployeeList = () => {
-    const {infos} = useSelector((state: RootState) => state.emp);
+    const { infos } = useSelector((state: RootState) => state.emp);
     const dispatch = useDispatch<RootDispatch>();
 
-    /// 심어주기
     useEffect(() => {
         dispatch(fetchGetEmployeeInfos());
     }, [dispatch]);
 
     return (
         <>
-        <div style={buttonBarStyle}>
-            {infos?.map(info => (
-                <button
-                    key={info.id}
-                    onClick={() => dispatch(handleSelectedId(info.id))}
-                >
-                    {info.name}
-                </button>
-
-            ))}
-        </div>
-            <div>
-                <InfoTable  />
+            <div style={buttonBarStyle}>
+                {infos.map(info => (
+                    <button
+                        key={info.id}
+                        onClick={() => dispatch(handleSelectedId(info.id))}
+                    >
+                        {info.name}
+                    </button>
+                ))}
             </div>
+
+            <InfoTable />
         </>
     );
 };
