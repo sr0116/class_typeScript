@@ -1,12 +1,16 @@
-"use client"
+'use client'
+import React from 'react';
 import EmployeeList from "@/components/EmployeeList";
 import Register from "@/components/Register";
 import Upgrade from "@/components/Upgrade";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "@/redux/store";
-import {handleMode} from "@/redux/slice/employeeSlice";
+import {RootDispatch, RootState} from "@/redux/store";
+import {handleMode, handleSelectedId} from "@/redux/slice/employeeSlice";
+import type {Mode} from "@/redux/slice/employeeSlice";
+import {fetchDeleteEmployeeInfoById} from "@/redux/api/employeeAPI";
 
-export const buttonBarStyle: React.CSSProperties = {
+
+export const Style:React.CSSProperties = {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
@@ -14,32 +18,39 @@ export const buttonBarStyle: React.CSSProperties = {
     gap: "10px",
     padding: "20px",
 }
-{/*이게 액션.페이로드 -> 스테이트값을 찾는다고 보면 됨 dispatch(handleMode(mode.id)) */}
 
 const Main = () => {
-    const {mode, modes} = useSelector((state: RootState) => state.emp);
-    const dispatch = useDispatch();
+    const {mode, selectedId, modes} = useSelector((state: RootState) => state.emp);
+    const dispatch = useDispatch<RootDispatch>();
+    const handleModeChange = (id:Mode) => {
+        dispatch(handleMode(id));
+        if (mode === "delete" && typeof selectedId === "number") {
+            dispatch(fetchDeleteEmployeeInfoById(selectedId))
+        }
+    }
 
     return (
         <>
             <div>
-                <EmployeeList />
+                <EmployeeList/> {/*자식: InfoTable*/}
             </div>
-            <div style={buttonBarStyle}>
-                {modes.map(mode => (
-                    <button
-
-                        key={mode.id}  onClick={() => dispatch(handleMode(mode.id))}> {mode.label}</button>
+            <div style={Style}>
+                {modes.map(item => (
+                    <button key={item.id} onClick={() => handleModeChange(item.id)}>
+                        {item.label}
+                    </button>
                 ))}
             </div>
             <div>
-                {mode === "register" && <Register /> }
-                {mode === "upgrade" && <Upgrade />}
+                {mode==="register" && (<Register/>)}
+                {mode==='upgrade' && <Upgrade/>}
             </div>
 
         </>
-    );
 
+    );
 };
+
+
 
 export default Main;

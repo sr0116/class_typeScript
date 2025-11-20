@@ -1,11 +1,11 @@
-"use client"
-
-import React, {useContext, useMemo} from 'react';
+'use client'
+import React, {useMemo} from 'react';
 import {useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {EmployeeInfo} from "@/redux/slice/employeeSlice";
+import {Style} from "@/components/Main";
 
-const tStyle: React.CSSProperties = {
+const tableStyle: React.CSSProperties = {
     width: "800px",
     margin: "0 auto",
     borderCollapse: "collapse",
@@ -15,7 +15,6 @@ const tStyle: React.CSSProperties = {
     overflow: "hidden",
     tableLayout: "fixed",
 };
-
 const thStyle: React.CSSProperties = {
     backgroundColor: "#f2f2f2",
     color: "#333",
@@ -26,7 +25,6 @@ const thStyle: React.CSSProperties = {
     textTransform: "uppercase",
     fontSize: "0.9em",
 };
-
 const tdStyle: React.CSSProperties = {
     padding: "12px 15px",
     borderBottom: "1px solid #eee",
@@ -34,37 +32,34 @@ const tdStyle: React.CSSProperties = {
     color: "#555",
 };
 
-
 const InfoTable = () => {
-    const {infos, selectedId} = useSelector((state:RootState) => state.emp);
+    const {infos, selectedId} = useSelector((state: RootState) => state.emp)
 
-    const infoObject: EmployeeInfo | undefined  = useMemo(() =>
-        infos.find(info => info.id === selectedId), [selectedId, infos]); //  하나로 올때는 find
+    const infoObject: EmployeeInfo | undefined = useMemo(()=>
+        infos.find(info => info.id === selectedId),[selectedId, infos]);
 
-    if (!infoObject) return <div>선택된 정보가 없습니다.</div>;
+    if (!infoObject) return <div style={Style}>선택된 정보가 없습니다.</div>;
+
     return (
-        // 테이블 구조가 트리구조
-        <div className="flex mx-auto">
-            <table style={tStyle}>
-                <thead>
+        <table style={tableStyle}>
+            <thead>
                 <tr>
                     {Object.keys(infoObject)
-                        .filter(entry => entry !== "id")
-                        .map(key => <th key={key}  style={thStyle}>{key}</th>)
+                        .filter( entry =>  entry !== "id")
+                        .map(key => <th key={key} style={thStyle} >{key}</th>)
                     }
                 </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    {Object.values(infoObject)
-                        .filter((_, idx) => idx !== 0)
-                        .map(value => (<td key={value}  style={tdStyle}>{value}</td>))}
-                </tr>
-                </tbody>
-            </table>
-
-
-        </div>
+            </thead>
+            <tbody>
+                  <tr>
+                      {Object.values(infoObject)
+                          .filter((_, idx) => idx !== 0)
+                          .map(((value) => (<td key={value} style={tdStyle}>{value}</td>)))
+                      }
+                  </tr>
+            </tbody>
+            
+        </table>
     );
 };
 
