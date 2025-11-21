@@ -204,50 +204,39 @@ export const fetchPutEmployeeInfoById = createAsyncThunk<
 // 4) DELETE: 삭제
 // =======================
 export const fetchDeleteEmployeeInfoById = createAsyncThunk<
-    number,   // 성공 시: 삭제한 id (number)
-    number,   // 호출 시: id (number)
+    number,
+    number,
     { rejectValue: string }
->(
-    "employeeApi/fetchDeleteEmployeeInfo",
-    async (id, thunkAPI) => {
-        const mutation = `
+>("employeeApi/fetchDeleteEmployeeInfo", async (id, thunkAPI) => {
+    const mutation = `
       mutation DeleteEmployee($id: ID!) {
         deleteEmployee(id: $id)
       }
     `;
 
-        try {
-            const { data } = await axios.post<
-                GraphQLResponse<{ deleteEmployee: string }>
-            >(
-                GRAPH_URL,
-                {
-                    query: mutation,
-                    variables: { id: String(id) },
+    try {
+        const { data } = await axios.post<
+            GraphQLResponse<{ deleteEmployee: string }>
+        >(
+            GRAPH_URL,
+            {
+                query: mutation,
+                variables: { id: String(id) },
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
                 },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (data.errors?.length) {
-                console.error("GraphQL errors:", data.errors);
-                return thunkAPI.rejectWithValue("GraphQL error");
             }
+        );
 
-            if (!data.data) {
-                return thunkAPI.rejectWithValue("응답 데이터가 없습니다.");
-            }
-
-            // 서버는 ID(string)를 반환하지만, 우리는 호출한 number id를 그대로 돌려줌
-            // slice에서 state.infos = infos.filter(e => e.id !== action.payload) 할 수 있게
-            console.log("deleted employee id:", data.data.deleteEmployee);
-            return id;
-        } catch (e) {
-            console.error("Network error:", e);
-            return thunkAPI.rejectWithValue("데이터 전송 실패");
+        if (data.errors?.length) {
+            return thunkAPI.rejectWithValue("GraphQL error");
         }
+
+        return id; // 삭제 성공 → id 리턴
+    } catch (e) {
+        return thunkAPI.rejectWithValue("삭제 실패");
     }
-);
+});
+

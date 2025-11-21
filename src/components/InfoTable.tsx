@@ -43,22 +43,23 @@ const InfoTable = () => {
     return (
         <table style={tableStyle}>
             <thead>
-                <tr>
-                    {Object.keys(infoObject)
-                        .filter( entry =>  entry !== "id")
-                        .map(key => <th key={key} style={thStyle} >{key}</th>)
-                    }
-                </tr>
+            <tr>
+                {Object.keys(infoObject)
+                    .filter(entry => entry !== "id")
+                    .map((key, idx) => (
+                        <th key={idx} style={thStyle}>{key}</th>
+                    ))}
+            </tr>
             </thead>
             <tbody>
-                  <tr>
-                      {Object.values(infoObject)
-                          .filter((_, idx) => idx !== 0)
-                          .map(((value) => (<td key={value} style={tdStyle}>{value}</td>)))
-                      }
-                  </tr>
+            <tr>
+                {Object.values(infoObject)
+                    .filter((_, idx) => idx !== 0)
+                    .map((value, idx) => (
+                        <td key={idx} style={tdStyle}>{value}</td>
+                    ))}
+            </tr>
             </tbody>
-
         </table>
     );
 };

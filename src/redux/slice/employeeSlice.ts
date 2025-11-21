@@ -1,25 +1,24 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-    fetchDeleteEmployeeInfoById,
     fetchGetEmployeeInfos,
     fetchPostEmployeeInfo,
-    fetchPutEmployeeInfoById
+    fetchPutEmployeeInfoById,
+    fetchDeleteEmployeeInfoById,
 } from "@/redux/api/employeeAPI";
 
-
-export type Mode = "" | "register" | "upgrade" | "delete" | "reset"
+export type Mode = "" | "register" | "upgrade" | "delete" | "reset";
 
 interface ModeItem {
     id: Mode;
     label: string;
 }
-// mode data
-const modes: ModeItem[] =  [
-    {id:"register" as Mode, label:"register" as string},
-    {id:"upgrade" as Mode, label:"upgrade" as string},
-    {id:"delete" as Mode, label:"delete" as string},
-    {id:"reset"as Mode, label:"reset" as string}
-]
+
+const modes: ModeItem[] = [
+    { id: "register", label: "register" },
+    { id: "upgrade", label: "upgrade" },
+    { id: "delete", label: "delete" },
+    { id: "reset", label: "reset" },
+];
 
 export type EmployeeInfo = {
     id: number;
@@ -28,11 +27,11 @@ export type EmployeeInfo = {
     job: string;
     language: string;
     pay: number | string;
-}
+};
 
 interface EmployeeStateType {
     mode: Mode;
-    modes:ModeItem[];
+    modes: ModeItem[];
     infos: EmployeeInfo[];
     upInfo: EmployeeInfo | null;
     selectedId: number | null;
@@ -40,198 +39,94 @@ interface EmployeeStateType {
     loading: boolean;
 }
 
-// initialState 설정
 const initialState: EmployeeStateType = {
-    mode: '',
+    mode: "",
     modes,
     infos: [],
     upInfo: null,
-    selectedId: 0,
+    selectedId: null,
     error: null,
-    loading: false
-}
+    loading: false,
+};
 
-
-// Action Reducers 설정
 const handleModeReducer = (
     state: EmployeeStateType,
     action: PayloadAction<Mode>
-) =>{
+) => {
     const mod = action.payload;
 
-    if(mod === "delete"){
-        if(!state.selectedId){
-            alert("직원을 선택해 주세요!!!")
-            return;
+    // reset 모드
+    if (mod === "reset") {
+        if (confirm("초기 데이터로 되돌릴까요?")) {
+            state.infos = [];
+            state.mode = "";
+            state.upInfo = null;
+            state.selectedId = null;
         }
-        const targetObj = state.infos.find(x => x.id === state.selectedId)
-        if(!targetObj){
-            alert("해당 직원을 찾을 수 없습니다.")
-            return;
-        }
-        if(confirm(`${targetObj.name} 직원을 삭제할까요?`)){
+        return;
+    }
 
-            state.infos = [...state.infos].filter(item => item.id !== state.selectedId)
-            state.mode = "";
-            state.upInfo= null;
-            state.selectedId = null;
-        }
-        return;
-    }
-    if(mod === 'reset'){
-        if(confirm("목록을 초기 데이터로 되돌릴까요?")){
-            state.infos = []
-            state.mode = "";
-            state.upInfo= null;
-            state.selectedId = null;
-        }
-        return;
-    }
-    if(mod === "upgrade"){
-        if(!state.selectedId){
-            alert("수정할 직원을 먼저 선택해 주세요!!")
+    // upgrade 모드
+    if (mod === "upgrade") {
+        if (!state.selectedId) {
+            alert("수정할 직원을 선택하세요!");
             return;
         }
     }
-    state.mode = mod
-}
+
+    state.mode = mod;
+};
 
 const handleSelectedIdReducer = (
-    state:EmployeeStateType,
-    action:PayloadAction<number>
-) =>{
+    state: EmployeeStateType,
+    action: PayloadAction<number>
+) => {
     const id = action.payload;
-    state.selectedId = id
-    state.upInfo = state.infos.filter(info => info.id === id)[0] ?? null;
-}
+    state.selectedId = id;
+    state.upInfo = state.infos.find((info) => info.id === id) ?? null;
+};
 
-// const handleRegisterReducer = (
-//     state: EmployeeStateType,
-//     action: PayloadAction<EmployeeInfo>
-// ) => {
-//     const obj = action.payload;
-//     if (!obj.name) {
-//         alert("이름은 필수입니다.")
-//         return;
-//     }
-//     if (!obj.age || Number(obj.age) < 0) {
-//         alert("나이는 필수입니다.")
-//         return;
-//     }
-//     if (!obj.pay || Number(obj.pay) < 0) {
-//         alert("급여는 필수입니다.")
-//         return;
-//     }
-//     if (state.infos.some(item => item.name === obj.name)) {
-//         alert("이미 존재하는 이름입니다.")
-//         return;
-//     }
-//     const nextId = state.infos.length ? Math.max(...state.infos.map((i) => i.id)) + 1 : 1;
-//     state.infos = [...state.infos, {...obj, id: nextId}];
-// }
-
-// const handleUpgradeReducer = (
-//         state: EmployeeStateType,
-//         action: PayloadAction<EmployeeInfo>
-//     ) => {
-//     const obj = action.payload;
-//         if (Number(obj.age)<0){
-//             alert("나이는 0 이상입니다.")
-//             return;
-//         }
-//         if (Number(obj.pay)<0){
-//             alert("급여는 0 이상입니다.")
-//             return;
-//         }
-//         state.infos = [...state.infos].map(item =>
-//             item.id === obj.id ?
-//                 {...item,
-//                     age: obj.age,
-//                     job: obj.job,
-//                     language: obj.language,
-//                     pay: obj.pay,
-//                 } : item
-//         );
-//         state.mode = ''
-// }
-
-
-// thunk Slice 담기
 const employeeSlice = createSlice({
     name: "employeeSlice",
     initialState,
-    reducers:{
+    reducers: {
         handleMode: handleModeReducer,
-        // handleRegister: handleRegisterReducer,
-        // handleUpgrade: handleUpgradeReducer,
-        handleSelectedId: handleSelectedIdReducer
+        handleSelectedId: handleSelectedIdReducer,
     },
     extraReducers: (builder) => {
-        //Get 전체 데이터 fetchGetEmployeeInfos
         builder
-            .addCase(fetchGetEmployeeInfos.pending, (state) =>{
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchGetEmployeeInfos.fulfilled, (state, action) =>{
-                state.loading = false;
-                console.log("total", action.payload);
+            .addCase(fetchGetEmployeeInfos.fulfilled, (state, action) => {
                 state.infos = action.payload;
-                console.log("state.total", state.infos);
-            })
-            .addCase(fetchGetEmployeeInfos.rejected, (state, action) =>{
                 state.loading = false;
-                state.error = action.payload ?? "로드 실패";
             })
-        builder
-            .addCase(fetchPostEmployeeInfo.pending, (state) =>{
-                state.loading = true;
-                state.error = null;
+            .addCase(fetchPostEmployeeInfo.fulfilled, (state, action) => {
+                state.infos.push(action.payload);
+                state.mode = "";
             })
-            .addCase(fetchPostEmployeeInfo.fulfilled, (state, action) =>{
-                state.loading = false;
-                state.infos =[...state.infos, action.payload];
-                if(action.payload){
-                    state.mode = '';
-                }
-                console.log("infos", state.infos)
-            })
-            .addCase(fetchPostEmployeeInfo.rejected, (state, action) =>{
-                state.loading = false;
-                state.error = action.payload ?? "로드 실패";
-            })
-        builder
-            .addCase(fetchPutEmployeeInfoById.pending, (state) =>{
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchPutEmployeeInfoById.fulfilled, (state, action) =>{
-                const obj = action.payload;
-                state.loading = false;
-                state.upInfo = action.payload;
-                state.infos = [...state.infos].map(item =>
-                    item.id === obj.id ?
-                        {...item,
-                            age: obj.age,
-                            job: obj.job,
-                            language: obj.language,
-                            pay: obj.pay,
-                        } : item
-                );
-            })
-            .addCase(fetchPutEmployeeInfoById.rejected, (state, action) =>{
-                state.loading = false;
-                state.error = action.payload ?? "로드 실패";
-            })
-    }
+            .addCase(fetchPutEmployeeInfoById.fulfilled, (state, action) => {
+                const updated = action.payload;
 
+                state.infos = state.infos.map((item) =>
+                    item.id === updated.id ? updated : item
+                );
+
+                state.upInfo = updated;
+            })
+            .addCase(fetchDeleteEmployeeInfoById.fulfilled, (state, action) => {
+                const deletedId = action.payload;
+
+                // 여기에서 Redux 상태에서 삭제
+                state.infos = state.infos.filter(
+                    (item) => item.id !== deletedId
+                );
+
+                state.selectedId = null;
+                state.upInfo = null;
+                state.mode = "";
+            });
+    },
 });
 
-export const {
-    handleMode,
-    // handleRegister,
-    // handleUpgrade,
-    handleSelectedId
-} = employeeSlice.actions;
+export const { handleMode, handleSelectedId } = employeeSlice.actions;
 
 export default employeeSlice.reducer;
