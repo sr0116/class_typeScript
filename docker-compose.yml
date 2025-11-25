@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  db-graph:
+    image: postgres:16-alpine
+    container_name: db-graph
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data_graph:/var/lib/postgresql/data
+    ports:
+      - "5437:5432"
+    networks:
+      - app-network-graph
+
+  backend-graph:
+    build:
+      context: ./exGraphQL
+      dockerfile: Dockerfile
+    container_name: backend-graph
+    restart: always
+    depends_on:
+      - db-graph
+    env_file:
+      - .env
+    ports:
+      - "5438:8080"
+    networks:
+      - app-network-graph
+
+  frontend-graph:
+    build:
+      context: ./next_ts_employee_redux_graphql
+      dockerfile: Dockerfile
+    container_name: frontend-graph
+    restart: always
+    depends_on:
+      - backend-graph
+    env_file:
+      - .env
+    ports:
+      - "5439:3000"
+    networks:
+      - app-network-graph
+
+  nginx-graph:
+    image: nginx:latest
+    container_name: nginx-graph
+    depends_on:
+      - backend-graph
+      - frontend-graph
+    ports:
+      - "5440:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network-graph
+
+volumes:
+  db_data_graph:
+
+networks:
+  app-network-graph:
